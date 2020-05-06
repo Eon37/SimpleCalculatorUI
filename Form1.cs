@@ -13,67 +13,13 @@ namespace WindowsFormsApp1
 {
     public partial class Form1 : Form
     {
-        private Rectangle labelRect;
-        private Button[] btns;
-        private Rectangle[] btnRects;
-
-        private Size formOrigSize;
-
         private string expr;
-
         private Regex rgx;
 
         public Form1()
         {
             InitializeComponent();
-        }
-
-        private void Form1_Load(object sender, EventArgs e)
-        {
-            formOrigSize = this.Size;
-
-            btns = new Button[] { btn0, btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9, btnCE, btnDot, btnAdd, btnMult, btnSub, btnDiv, btnEqls };
-            btnRects = new Rectangle[btns.Length];            
-
-            for(int i=0; i<btns.Length; i++)
-            {
-                btnRects[i] = new Rectangle(btns[i].Location.X, btns[i].Location.Y, btns[i].Width, btns[i].Height);
-            }
-
-            labelRect = new Rectangle(Expression.Location.X, Expression.Location.Y, Expression.Width, Expression.Height);
-            
-
-        }
-
-        private void resizeElements()
-        {
-            resizeControl(labelRect, Expression);
-            for(int i=0; i<btns.Length; i++)
-            {
-                resizeControl(btnRects[i], btns[i]);
-            }
-            
-        }
-
-        private void resizeControl(Rectangle origRect, Control c)
-        {
-            float xRatio = (float)(this.Width +3) / (float)(formOrigSize.Width -2);
-            float yRatio = (float)(this.Height +3) / (float)(formOrigSize.Height -2);
-
-            int x = (int)(origRect.X * xRatio);
-            int y = (int)(origRect.Y * yRatio);
-
-            int width = (int)(origRect.Width * xRatio);
-            int height = (int)(origRect.Height * yRatio);
-
-            c.Location = new Point(x, y);
-            c.Size = new Size(width, height);
-        }
-
-        private void Form1_Resize(object sender, EventArgs e)
-        {
-            resizeElements();
-        }
+        }        
 
         private void btnEqls_Click(object sender, EventArgs e)
         {
@@ -310,6 +256,17 @@ namespace WindowsFormsApp1
 
                 case Keys.Back: btnCE_Click(sender, e); break;
             }
+        }
+
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (msg.WParam.ToInt32() == 13)
+            {
+                btnEqls_Click(new Object(), new KeyEventArgs(keyData));
+                return true;
+            }
+            else return false;
         }
     }
 }
