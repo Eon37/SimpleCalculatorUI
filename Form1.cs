@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
 
@@ -29,10 +22,8 @@ namespace WindowsFormsApp1
             expr = multiply(expr);
             rgx = new Regex("(\\d+(,?\\d+)?)/(\\d+(,?\\d+)?)");
             expr = divide(expr);
-            rgx = new Regex("(\\d+(,?\\d+)?)\\+(\\d+(,?\\d+)?)");
+            rgx = new Regex("(-?\\d+(,?\\d+)?)\\+?(-?\\d+(,?\\d+)?)");
             expr = add(expr);
-            rgx = new Regex("(\\d+(,?\\d+)?)-(\\d+(,?\\d+)?)");
-            expr = sub(expr);
             Expression.Text = expr;
 
             Clipboard.SetText(expr);
@@ -63,20 +54,9 @@ namespace WindowsFormsApp1
 
         private string add(string s)
         {
-            if (s.Contains("+"))
+            if ((s.Contains("+") || s.Contains("-")) && !(new Regex("^-\\d+(,?\\d+)?$").Match(s)).Success)
             {
                 return add(rgx.Replace(s, (float.Parse(rgx.Match(s).Groups[1].Value) +
-                                                 float.Parse(rgx.Match(s).Groups[3].Value)).ToString(), 1));
-
-            }
-            return s;
-        }
-
-        private string sub(string s)
-        {
-            if (s.Contains("-"))
-            {
-                return sub(rgx.Replace(s, (float.Parse(rgx.Match(s).Groups[1].Value) -
                                                  float.Parse(rgx.Match(s).Groups[3].Value)).ToString(), 1));
 
             }
@@ -184,8 +164,6 @@ namespace WindowsFormsApp1
 
         private void btnSub_Click(object sender, EventArgs e)
         {
-            if (Expression.Text != "0")
-            {
                 switch (Expression.Text[Expression.Text.Length - 1])
                 {
                     case '+': break;
@@ -196,7 +174,7 @@ namespace WindowsFormsApp1
                     case '∞': break;
                     default: Expression.Text += "-"; break;
                 }
-            }
+            
         }
 
         private void btnMult_Click(object sender, EventArgs e)
@@ -250,7 +228,7 @@ namespace WindowsFormsApp1
                 case Keys.Decimal: btnDot_Click(sender, e); break;
 
                 case Keys.Add: btnAdd_Click(sender, e); break;
-                case Keys.Subtract: btnSub_Click(sender, e); break;
+                case Keys.Subtract: btnAdd_Click(sender, e); break;
                 case Keys.Multiply: btnMult_Click(sender, e); break;
                 case Keys.Divide: btnDiv_Click(sender, e); break;
 
